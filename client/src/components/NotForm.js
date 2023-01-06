@@ -5,14 +5,19 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 
+import {useNotContext} from '../hooks/useNotContext';
+
 function NotForm() {
     const [baslik,setBaslik]=useState('');
     const [aciklama,setAciklama]=useState('');
-    const [hata,setHata]=useState(null)
+    const [hata,setHata]=useState(null);
+    const [bosAlanlar,setBosalanlar]=useState([]);
+
+    const {dispatch}=useNotContext();
     const handleSubmit=async (e)=>{
         e.preventDefault();
         const not={baslik,aciklama}
-        console.log(not);
+        // console.log(not);
 
         const response=await fetch('/notlar',{
             method:'POST',
@@ -24,12 +29,15 @@ function NotForm() {
         const json=await response.json();
         if(!response.ok){
             setHata(json.msg);
+            setBosalanlar(json.bosAlanlar);
         }
         if(response.ok){
             setHata(null);
             setBaslik('');
             setAciklama('');
-            console.log("Yeni bir not eklendi", json);
+            setBosalanlar([]);
+            dispatch({type:'NOT_OLUSTUR',payload:json})
+            // console.log("Yeni bir not eklendi", json);
         }
     }
 
@@ -38,7 +46,7 @@ function NotForm() {
         <h3 className="text-center">Yeni Bir Not Ekle</h3>
         <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Baslik Giriniz:</Form.Label>
-            <Form.Control type="text" placeholder="Baslik Girin" onChange={(e)=>setBaslik(e.target.value)} value={baslik}/>
+            <Form.Control className={bosAlanlar.includes('baslik')?'error':''} type="text" placeholder="Baslik Girin" onChange={(e)=>setBaslik(e.target.value)} value={baslik}/>
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Aciklama Giriniz:</Form.Label>
