@@ -3,7 +3,7 @@ const mongoose=require("mongoose");
 const notSema=mongoose.Schema({
     baslik:{
         type:String,
-        required:true
+        required:[true,'Başlık Bilgisi Girilmelidir']
     },
     aciklama:{
         type:String
