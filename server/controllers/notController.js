@@ -13,7 +13,8 @@ const notOlustur=async(req,res)=>{
         return res.status(400).json({msg:'Alanlar Boş Geçilemez',bosAlanlar})
     }
     try {
-        const not=await NotModel.create({baslik,aciklama});
+        const kullanici_id=req.kullanici._id;
+        const not=await NotModel.create({baslik,aciklama,kullanici_id});
         return res.status(200).json(not);
     } catch (error) {
         return res.status(400).json({msg:error.message});
@@ -21,7 +22,8 @@ const notOlustur=async(req,res)=>{
 }
 const notlarGetir=async(req,res)=>{
     try {
-        const notlar=await NotModel.find().sort({
+        const kullanici_id=req.kullanici._id;
+        const notlar=await NotModel.find({kullanici_id}).sort({
             createdAt:-1
         });
         return res.status(200).json(notlar);

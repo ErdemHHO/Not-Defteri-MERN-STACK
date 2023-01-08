@@ -4,14 +4,21 @@ import React from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {useState} from 'react'
+import {useLogin} from "../hooks/useLogin"
+import Alert from 'react-bootstrap/Alert';
+
+
 
 function LoginScreen() {
     const [email,setEmail]=useState('');
     const [parola,setParola]=useState('');
 
+    const{login,yukleniyor,hata}=useLogin();
+
     const handleSubmit=async(e)=>{
         e.preventDefault();
-        console.log(email,parola);
+        
+        await login(email,parola);
     }
 
   return (
@@ -28,10 +35,15 @@ function LoginScreen() {
       </Form.Group>
 
       <div className="d-grid gap-2">
-        <Button  type="submit" variant="primary">
+        <Button disabled={yukleniyor}  type="submit" variant="primary">
             Giriş Yap
         </Button>
       </div>
+      {hata &&
+            <Alert>
+                {hata}
+            </Alert>
+      }
     </Form>
   )
 }

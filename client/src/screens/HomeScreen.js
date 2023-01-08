@@ -8,14 +8,21 @@ import { useNotContext } from '../hooks/useNotContext';
 import NotDetay from '../components/NotDetay'
 import NotForm from '../components/NotForm'
 
+import {useAuthContext} from '../hooks/useAuthContext'
+
 function HomeScreen() {
   // const [notlar,setNotlar]=useState(null);
   const {notlar,dispatch}=useNotContext();
+  const {kullanici}=useAuthContext();
   useEffect(()=>{
 
     const fetchNotlar=async()=>{
 
-      const response=await fetch('/notlar');
+      const response=await fetch('/notlar',{
+        headers:{
+          'Authorization':`Baerer ${kullanici.token}`
+        }
+      });
 
       const json=await response.json();
       
@@ -24,10 +31,10 @@ function HomeScreen() {
         dispatch({type:'NOT_DOLDUR',payload:json})
       }
     }
-
-    fetchNotlar();
-
-  },[dispatch])
+    if(kullanici){
+        fetchNotlar();
+    }
+  },[dispatch,kullanici])
   return (
     <div className='p-5'>
       <div>

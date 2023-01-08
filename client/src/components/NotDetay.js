@@ -5,12 +5,22 @@ import moment from 'moment';
 import 'moment/locale/tr' 
 
 import {useNotContext} from "../hooks/useNotContext";
+import {useAuthContext} from "../hooks/useAuthContext";
 
 function NotDetay({not}) {
   const {dispatch}=useNotContext();
+  const {kullanici}=useAuthContext();
   const handleClick=async()=>{
+
+    if(!kullanici){
+      return
+    }
+
     const response=await fetch('/notlar/'+not._id,{
-      method:'DELETE'
+      method:'DELETE',
+      headers:{
+        'Authorization':`Baerer ${kullanici.token}`
+      }
     })
     const json=await response.json();
     console.log(json)

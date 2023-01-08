@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 
 import {useNotContext} from '../hooks/useNotContext';
+import {useAuthContext} from '../hooks/useAuthContext';
 
 function NotForm() {
     const [baslik,setBaslik]=useState('');
@@ -14,8 +15,16 @@ function NotForm() {
     const [bosAlanlar,setBosalanlar]=useState([]);
 
     const {dispatch}=useNotContext();
+    const {kullanici}=useAuthContext();
+
     const handleSubmit=async (e)=>{
         e.preventDefault();
+
+        if(!kullanici){
+            setHata('Giriş Yapmalısınız');
+            return
+        }
+
         const not={baslik,aciklama}
         // console.log(not);
 
@@ -23,7 +32,8 @@ function NotForm() {
             method:'POST',
             body:JSON.stringify(not),
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization':`Bearer ${kullanici.token}`
             }
         })
         const json=await response.json();
